@@ -15,9 +15,13 @@ const drawer = ref(false);
           </div>
 
           <div class="d-flex">
-            <VBtn color="white" class="text-none bg-primary"> Login </VBtn>
-            
-            <VBtn color="white" class="text-none bg-primary"> Sign Up </VBtn>
+            <div>
+              <VBtn color="white" class="text-none bg-primary"> Login </VBtn>
+            </div>
+            <VDivider vertical class="ma-2" />
+            <div>
+              <VBtn color="white" class="text-none bg-primary"> Sign Up </VBtn>
+            </div>
           </div>
         </div>
       </VContainer>
