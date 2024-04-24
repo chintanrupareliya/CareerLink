@@ -5,13 +5,30 @@ const fetchLatestJob = async () => {
   const responce = await axios.get("/jobs");
   jobs.value = responce.data.data;
 };
+
+function experienceRequired(experienceLevels) {
+  if (experienceLevels.length === 0) {
+    return "No experience required";
+  }
+
+  const sortedLevels = experienceLevels.slice().sort((a, b) => a - b);
+
+  if (new Set(sortedLevels).size === 1) {
+    return `${sortedLevels[0]} years of experience required`;
+  }
+
+  const minExperience = sortedLevels[0];
+  const maxExperience = sortedLevels[sortedLevels.length - 1];
+  return `Experience required: ${minExperience}-${maxExperience} years`;
+}
+
 onMounted(async () => {
   await fetchLatestJob();
 });
 // onMounted(fetchLatestJob());
 </script>
 <template>
-  <div class="mt-5">
+  <div class="mt-5 Jobs">
     <VContainer>
       <div class="d-flex align-center justify-between">
         <div class="text-h3 ma-5">
@@ -38,12 +55,16 @@ onMounted(async () => {
             md="4"
             lg="3"
           >
-            <v-card class="pa-3 mb-3 elevation-0 border-gray-500 border">
+            <v-card class="pa-3 mb-3 elevation-0 border-gray-500 border h-100">
               <VCardTitle class="d-flex justify-between">
                 <div>
                   <VAvatar color="red">
                     <img
-                      :src="`http://127.0.0.1:8000/storage/logos/${job.company.logo_url}`"
+                      :src="
+                        job.company.logo_url
+                          ? `http://127.0.0.1:8000/storage/logos/${job.company.logo_url}`
+                          : '/Frame.png'
+                      "
                       alt="alt"
                     />
                   </VAvatar>
@@ -57,46 +78,36 @@ onMounted(async () => {
 
               <div>
                 <VCardTitle>{{ job.title }}</VCardTitle>
+
                 <VCardText>
                   <div>
-                    {{ job.company.name }}
+                    {{ job.company.name }} <VDivider vertical />
                     <span>{{ job.company.location }}</span>
                   </div>
                 </VCardText>
               </div>
               <VCardText>
-                <div>Description: {{ job.description }}</div>
-
-                <div>Salary: {{ job.salary }}</div>
-                <div>Employment Type: {{ job.employment_type }}</div>
+                <div class="my-3">{{ job.description }}</div>
+                <div><VIcon>mdi-currency-usd</VIcon>{{ job.salary }}</div>
                 <div>
                   Required Experience:
-                  <ul>
-                    <li
-                      v-for="(experience, index) in job.required_experience"
-                      :key="index"
-                    >
-                      {{ experience }}
-                    </li>
-                  </ul>
+                  <p class="font-bold">
+                    {{ experienceRequired(job.required_experience) }}
+                  </p>
                 </div>
                 <div>
-                  Required Skills:
-                  <ul>
-                    <li
+                  <div>
+                    <VChip
                       v-for="(skill, index) in job.required_skills"
                       :key="index"
+                      class="mx-1 my-1"
+                      size="small"
                     >
                       {{ skill }}
-                    </li>
-                  </ul>
+                    </VChip>
+                  </div>
                 </div>
-                <div>Posted Date: {{ job.posted_date }}</div>
-                <div>Expiry Date: {{ job.expiry_date }}</div>
               </VCardText>
-              <!-- Add other job details here -->
-
-              <!-- Add action buttons, if needed -->
             </v-card>
           </v-col>
         </v-row>
@@ -104,3 +115,10 @@ onMounted(async () => {
     </VContainer>
   </div>
 </template>
+<style scoped>
+.Jobs {
+  background-position: center;
+  background-size: cover;
+  background-image: url("../public/Desktop1.jpg");
+}
+</style>
