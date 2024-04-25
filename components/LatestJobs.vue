@@ -2,7 +2,7 @@
 import axios from "axios";
 const jobs = ref([]);
 const fetchLatestJob = async () => {
-  const responce = await axios.get("/jobs");
+  const responce = await axios.get("/latest_jobs");
   jobs.value = responce.data.data;
 };
 
@@ -25,7 +25,6 @@ function experienceRequired(experienceLevels) {
 onMounted(async () => {
   await fetchLatestJob();
 });
-// onMounted(fetchLatestJob());
 </script>
 <template>
   <div class="mt-5 Jobs">
@@ -115,6 +114,7 @@ onMounted(async () => {
     </VContainer>
   </div>
 </template>
+
 <style scoped>
 .Jobs {
   background-position: center;

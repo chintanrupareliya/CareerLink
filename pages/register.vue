@@ -5,6 +5,8 @@ import {
   passwordValidator,
   confirmedValidator,
 } from "../utils/validation";
+import axios from "axios";
+import { useUserStore } from "~/store/useUser";
 
 const email = ref("");
 const password = ref("");
@@ -12,7 +14,25 @@ const firstName = ref("");
 const lastName = ref("");
 const formRef = ref();
 const passwordConfirmation = ref("");
-const handleRegister = async () => {};
+const userStore = useUserStore();
+const router = useRouter();
+
+const { handleRegister } = userStore;
+
+const onSubmit = async () => {
+  const validate = await formRef.value.validate();
+  if (validate.valid) {
+    const formData = {
+      first_name: firstName.value,
+      last_name: lastName.value,
+      email: email.value,
+      password: password.value,
+      password_confirmation: passwordConfirmation.value,
+    };
+    await handleRegister(formData);
+    router.push("/jobs");
+  }
+};
 </script>
 <template>
   <div class="h-screen flex justify-center items-center">
@@ -21,7 +41,7 @@ const handleRegister = async () => {};
         <v-container>
           <VCardText class="w-full">
             <VCardTitle class="text-h5 mb-5">Register To Team Track</VCardTitle>
-            <VForm @submit.prevent="() => {}" ref="formRef">
+            <VForm @submit.prevent="onSubmit" ref="formRef">
               <VTextField
                 v-model="firstName"
                 label="First Name"

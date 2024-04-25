@@ -1,19 +1,24 @@
 <script setup>
-import axios from "axios";
 import { emailValidator, requiredValidator } from "../utils/validation";
+import { useUserStore } from "@/store/useUser";
+
 const email = ref("");
 const password = ref("");
 const router = useRouter();
-const onsubmit = async () => {
-  const validate = await formRef.value.validate();
+const refForm = ref();
+
+const userStore = useUserStore();
+
+const { handleLogin } = userStore;
+
+const onSubmit = async () => {
+  const validate = await refForm.value.validate();
   if (validate.valid) {
-    const formdata = {
+    const formData = {
       email: email.value,
       password: password.value,
     };
-    const response = await axios.post("auth/login", formdata);
-    const token = response.data.data.token;
-    localStorage.setItem("token", token);
+    await handleLogin(formData);
     router.push("/jobs");
   }
 };
@@ -24,7 +29,7 @@ const onsubmit = async () => {
       <v-container>
         <VCardText class="w-full">
           <VCardTitle class="text-h5 mb-5">Login To Team Track</VCardTitle>
-          <VForm @submit.prevent="onsubmit" ref="refForm">
+          <VForm @submit.prevent="onSubmit" ref="refForm">
             <VTextField
               v-model="email"
               label="Email"
