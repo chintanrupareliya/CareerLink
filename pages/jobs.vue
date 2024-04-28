@@ -1,8 +1,16 @@
 <script setup>
 import axios from "axios";
 import { VCardSubtitle } from "vuetify/components";
+import { requiredValidator } from "../utils/validation";
+
 const jobs = ref(null);
 const loading = ref(false);
+const dialog = ref(false);
+const formRef = ref();
+const resume = ref(null);
+const selectedJobId = ref(null);
+const coverLetter = ref(null);
+
 const fetchCompany = async () => {
   loading.value = true;
   const token = useCookie("token");
@@ -11,6 +19,24 @@ const fetchCompany = async () => {
     jobs.value = response.data.data;
   }
   loading.value = false;
+};
+
+const applyForJob = (jobId) => {
+  selectedJobId.value = jobId;
+  dialog.value = true;
+};
+
+const handleSubmit = async () => {
+  const formData = new FormData();
+  console.log(resume);
+  formData.append("job_id", selectedJobId.value);
+  formData.append("resume", resume.value);
+  formData.append("cover_letter", coverLetter.value);
+  const response = await axios.post("job_applications/create", formData);
+  if (response.status === 200) {
+    dialog.value = false;
+    toast.success("Application submitted successfully");
+  }
 };
 
 function experienceRequired(experienceLevels) {
@@ -28,6 +54,7 @@ function experienceRequired(experienceLevels) {
   const maxExperience = sortedLevels[sortedLevels.length - 1];
   return `Experience required: ${minExperience}-${maxExperience} years`;
 }
+
 onMounted(async () => {
   await fetchCompany();
 });
@@ -101,6 +128,7 @@ onMounted(async () => {
                 color="blue-lighten-3"
                 class="text-none text-white text-lg text-bold elevation-0 rounded-2xl w-75 bottom-2 position-absolute"
                 append-icon="mdi-open-in-new"
+                @click="applyForJob(job.id)"
                 >Apply Now</VBtn
               >
             </VCardText>
@@ -108,6 +136,63 @@ onMounted(async () => {
         </v-col>
       </v-row>
     </VContainer>
+  </div>
+
+  <div class="pa-4 text-center">
+    <v-dialog v-model="dialog" max-width="600">
+      <v-card
+        prepend-icon="mdi-application-edit-outline"
+        title="Job Application"
+      >
+        <VForm @submit.prevent="handleSubmit" ref="formRef">
+          <v-card-text>
+            <v-row dense>
+              <VCol cols="12">
+                <VFileInput
+                  small-chips
+                  label="Upload Resume*"
+                  show-size
+                  prepend-icon="mdi-file-pdf-box"
+                  variant="outlined"
+                  v-model="resume"
+                  :rules="[requiredValidator]"
+                >
+                </VFileInput>
+                <small class="text-caption text-medium-emphasis"
+                  >File size must be less than 2MB</small
+                >
+              </VCol>
+              <VCol cols="12">
+                <VTextarea
+                  label="Cover Latter*"
+                  v-model="coverLetter"
+                  variant="outlined"
+                ></VTextarea>
+              </VCol>
+            </v-row>
+
+            <small class="text-caption text-medium-emphasis"
+              >*indicates required field</small
+            >
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn text="Close" variant="plain" @click="dialog = false"></v-btn>
+
+            <v-btn
+              color="primary"
+              text="Apply"
+              variant="tonal"
+              type="submit"
+            ></v-btn>
+          </v-card-actions>
+        </VForm>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 

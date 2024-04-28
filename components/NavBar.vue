@@ -4,6 +4,12 @@ const userStore = useUserStore();
 const { logout } = userStore;
 const { user } = storeToRefs(userStore);
 const isLoggedIn = computed(() => user.value !== null);
+const router = useRouter();
+
+const Logout = async () => {
+  await logout();
+  router.push("/");
+};
 </script>
 
 <template>
@@ -21,11 +27,16 @@ const isLoggedIn = computed(() => user.value !== null);
               </div>
             </NuxtLink>
           </div>
-          <div class="ml-6">
-            <ul class="d-flex justify-space-around">
+          <div>
+            <ul class="d-flex">
               <li class="mx-2"><NuxtLink to="/">Home</NuxtLink></li>
-              <li>
+              <li class="mx-2">
                 <NuxtLink to="/jobs" v-if="isLoggedIn">Jobs</NuxtLink>
+              </li>
+              <li class="mx-2">
+                <NuxtLink to="/applications" v-if="isLoggedIn"
+                  >Your Applications</NuxtLink
+                >
               </li>
             </ul>
           </div>
@@ -68,7 +79,7 @@ const isLoggedIn = computed(() => user.value !== null);
                       <VDivider class="my-3" :thickness="3" />
                       <v-list-item-title
                         ><VBtn
-                          @click="logout()"
+                          @click="Logout()"
                           color="success w-100 text-none"
                         >
                           Log out</VBtn

@@ -25,11 +25,18 @@ export const useUserStore = defineStore("user", () => {
     user.value = response.data.data.user;
   };
 
-  const logout = () => {
-    console.log("hii");
-    const token = useCookie("token");
-    token.value = null;
-    user.value = null;
+  const logout = async () => {
+    try {
+      console.log("hii");
+      const response = await axios.post("auth/logout", null);
+      if (response.status === 200) {
+        const token = useCookie("token");
+        token.value = null;
+        user.value = null;
+      }
+    } catch (error) {
+      console.log("Logout failed", error);
+    }
   };
   return {
     user,

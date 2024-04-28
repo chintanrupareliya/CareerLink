@@ -16,6 +16,8 @@ const formRef = ref();
 const passwordConfirmation = ref("");
 const userStore = useUserStore();
 const router = useRouter();
+const visible = ref(false);
+const comfirmvisible = ref(false);
 
 const { handleRegister } = userStore;
 
@@ -35,7 +37,7 @@ const onSubmit = async () => {
 };
 </script>
 <template>
-  <div class="h-screen flex justify-center items-center">
+  <div class="flex justify-center items-center">
     <v-container class="flex flex-col justify-center items-center">
       <VCard class="w-full md:max-w-md p-10 border rounded-xl">
         <v-container>
@@ -68,7 +70,9 @@ const onSubmit = async () => {
                 label="Password"
                 variant="outlined"
                 :rules="[requiredValidator, passwordValidator]"
-                type="password"
+                :type="visible ? 'text' : 'password'"
+                @click:append-inner="visible = !visible"
+                :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                 class="my-4"
               />
               <VTextField
@@ -79,7 +83,9 @@ const onSubmit = async () => {
                   requiredValidator,
                   confirmedValidator(passwordConfirmation, password),
                 ]"
-                type="password"
+                :type="comfirmvisible ? 'text' : 'password'"
+                @click:append-inner="comfirmvisible = !comfirmvisible"
+                :append-inner-icon="comfirmvisible ? 'mdi-eye-off' : 'mdi-eye'"
                 class="my-4"
               />
               <VBtn

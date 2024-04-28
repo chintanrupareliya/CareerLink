@@ -7,8 +7,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const token = useCookie("token");
   if (token.value && user.value === null) {
-    console.log(token.value);
-
     await fetchSelf();
   }
 });
