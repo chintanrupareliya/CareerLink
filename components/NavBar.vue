@@ -29,14 +29,25 @@ const Logout = async () => {
           </div>
           <div>
             <ul class="d-flex">
-              <li class="mx-2"><NuxtLink to="/">Home</NuxtLink></li>
               <li class="mx-2">
-                <NuxtLink to="/jobs" v-if="isLoggedIn">Jobs</NuxtLink>
+                <NuxtLink to="/" exact-active-class="active">Home</NuxtLink>
               </li>
               <li class="mx-2">
-                <NuxtLink to="/applications" v-if="isLoggedIn"
-                  >Your Applications</NuxtLink
+                <NuxtLink
+                  to="/jobs"
+                  v-if="isLoggedIn"
+                  exact-active-class="active"
+                  >Jobs</NuxtLink
                 >
+              </li>
+              <li class="mx-2">
+                <NuxtLink
+                  to="/applications"
+                  v-if="isLoggedIn"
+                  exact-active-class="active"
+                >
+                  Your Applications
+                </NuxtLink>
               </li>
             </ul>
           </div>
@@ -96,3 +107,8 @@ const Logout = async () => {
     </VAppBar>
   </div>
 </template>
+<style scoped>
+.active {
+  color: blue;
+}
+</style>
