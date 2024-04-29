@@ -18,8 +18,8 @@ const fetchCompany = async () => {
   if (token.value) {
     const response = await axios.get("/jobs");
     jobs.value = response.data.data;
+    loading.value = false;
   }
-  loading.value = false;
 };
 
 const applyForJob = (jobId) => {
@@ -68,7 +68,10 @@ onMounted(async () => {
 <template>
   <div>
     <div class="jobpage">
-      <VContainer>
+      <div v-if="loading" class="d-flex align-center justify-center">
+        <VProgressCircular :size="40" color="primary" indeterminate />
+      </div>
+      <VContainer v-else>
         <v-row>
           <v-col
             v-for="(job, index) in jobs"
@@ -122,9 +125,12 @@ onMounted(async () => {
               </div>
               <VCardText>
                 <div class="my-3">{{ job.description }}</div>
-                <div><VIcon>mdi-currency-usd</VIcon>{{ job.salary }}</div>
+                <div class="mb-2">
+                  <VChip prepend-icon="mdi-currency-usd">
+                    {{ job.salary }}
+                  </VChip>
+                </div>
                 <div>
-                  Required Experience:
                   <p class="font-bold">
                     {{ experienceRequired(job.required_experience) }}
                   </p>
@@ -171,7 +177,7 @@ onMounted(async () => {
                 </VCol>
                 <VCol cols="12">
                   <VTextarea
-                    label="Cover Latter*"
+                    label="Cover Letter*"
                     v-model="coverLetter"
                     variant="outlined"
                   ></VTextarea>

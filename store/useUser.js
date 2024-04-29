@@ -14,7 +14,10 @@ export const useUserStore = defineStore("user", () => {
       const response = await axios.get("auth/user");
       user.value = response.data.data.user;
     } catch (error) {
-      console.error("Failed to fetch user data:", error);
+      const token = useCookie("token");
+      token.value = null;
+      user.value = null;
+      console.error("Failed to fetch user data:", error.response);
     }
   };
 

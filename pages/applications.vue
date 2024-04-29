@@ -3,11 +3,13 @@ import axios from "axios";
 import { VCardSubtitle } from "vuetify/components";
 
 const jobApplications = ref(null);
+const loading = ref(false);
 
 const fetchApplications = async () => {
-  console.log("hii");
+  loading.value = true;
   const response = await axios.get(`/job_applications/my_application`);
   jobApplications.value = response.data.data;
+  loading.value = false;
 };
 
 const getStatusDisplay = (statusCode) => {
@@ -82,7 +84,13 @@ onMounted(async () => {
 </script>
 <template>
   <div class="application">
-    <v-container>
+    <div v-if="loading" class="d-flex align-center justify-center">
+      <VProgressCircular :size="40" color="primary" indeterminate />
+    </div>
+    <v-container v-else>
+      <VRow>
+        <VCol cols="12" class="text-center text-h4">Job Applications </VCol>
+      </VRow>
       <v-row>
         <v-col
           v-for="application in jobApplications"
@@ -97,26 +105,45 @@ onMounted(async () => {
                 >{{ application.job.company.location }}</VCardSubtitle
               >
               <v-card-text class="d-flex w-100 justify-space-around flex-wrap">
-                <div class="ma-4">{{ application.cover_letter }}</div>
-                <div class="ma-4">
-                  <VChip :color="getStatusDisplay(application.status).color">{{
-                    getStatusDisplay(application.status).status
-                  }}</VChip>
-                </div>
-                <div class="ma-4">
-                  <VChip color="success" prepend-icon="mdi-clock">
-                    {{ formatDateToTimeAgo(application.application_date) }}
-                  </VChip>
-                </div>
-                <div class="text-blue-700 ma-4">
-                  <a
-                    :href="fetchImage(application.resume)"
-                    target="_blank"
-                    class="hover:underline"
+                <VRow>
+                  <VCol cols="12" lg="3" md="3" sm="3">
+                    <div>
+                      {{ application.cover_letter }}
+                    </div></VCol
                   >
-                    View Resume
-                  </a>
-                </div>
+                  <VCol cols="12" lg="3" md="3" sm="3">
+                    <div>
+                      <VChip
+                        :color="getStatusDisplay(application.status).color"
+                        >{{
+                          getStatusDisplay(application.status).status
+                        }}</VChip
+                      >
+                    </div>
+                  </VCol>
+                  <VCol cols="12" lg="3" md="3" sm="3">
+                    <div>
+                      <VChip color="success" prepend-icon="mdi-clock">
+                        {{
+                          formatDateToTimeAgo(
+                            new Date(application.application_date)
+                          )
+                        }}
+                      </VChip>
+                    </div>
+                  </VCol>
+                  <VCol cols="12" lg="3" md="3" sm="3">
+                    <div class="text-blue-700 ma-4">
+                      <a
+                        :href="fetchImage(application.resume)"
+                        target="_blank"
+                        class="hover:underline"
+                      >
+                        View Resume
+                      </a>
+                    </div>
+                  </VCol>
+                </VRow>
               </v-card-text>
               <div class="d-flex align-center">
                 <!-- 👉  Avatar -->
