@@ -91,7 +91,7 @@ onMounted(async () => {
       <VProgressCircular :size="40" color="primary" indeterminate />
     </div>
 
-    <v-container v-else>
+    <VContainer v-else-if="jobApplications && jobApplications.length > 0">
       <VRow>
         <VCol cols="12" class="text-center text-h4"> Job Applications </VCol>
       </VRow>
@@ -195,7 +195,15 @@ onMounted(async () => {
           </v-card>
         </v-col>
       </VRow>
-    </v-container>
+    </VContainer>
+    <div v-else class="h-full">
+      <div
+        cols="12"
+        class="text-center d-flex align-center justify-center h-full"
+      >
+        <h1 class="text-h3">No job applications found.</h1>
+      </div>
+    </div>
   </div>
 </template>
 
