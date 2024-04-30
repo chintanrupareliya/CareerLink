@@ -54,7 +54,7 @@ const Logout = async () => {
                   v-if="isLoggedIn"
                   exact-active-class="active"
                 >
-                  Your Applications
+                  Applications
                 </NuxtLink>
               </li>
             </ul>
@@ -106,7 +106,11 @@ const Logout = async () => {
                       <VDivider class="my-3" :thickness="3" />
 
                       <VListItemTitle>
-                        <VBtn @click="Logout()" color="success w-100 text-none">
+                        <VBtn
+                          @click="Logout()"
+                          color="primary"
+                          class="w-100 text-none"
+                        >
                           Log out
                         </VBtn>
                       </VListItemTitle>

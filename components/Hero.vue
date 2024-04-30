@@ -36,7 +36,7 @@
               <div class="search-bar">
                 <VForm
                   @submit.prevent="() => {}"
-                  class="d-flex align-center justify-center flex-wrap"
+                  class="d-flex align-center justify-center flex-wrap bg-white"
                 >
                   <div class="w-75 mt-5">
                     <VTextField
@@ -50,6 +50,7 @@
                     color="primary"
                     type="submit"
                     class="elevation-0 text-none ma-2"
+                    height="50px"
                     >Search</VBtn
                   >
                 </VForm>
@@ -79,7 +80,6 @@
 .hero {
   height: 100vh;
   width: 100vw;
-  background-position: center;
   background-size: cover;
   position: relative;
   top: -63px;

@@ -60,7 +60,8 @@ const Email = ref("");
             <VBtn
               color="blue"
               rounded="0"
-              class="text-white font-bold text-none h-full"
+              class="text-white font-bold text-none"
+              height="55"
               >Subscribe</VBtn
             >
           </div>
@@ -69,32 +70,22 @@ const Email = ref("");
 
       <VDivider class="my-5" />
 
-      <VRow class="d-flex justify-between my-5">
-        <VCol class="text-gray-500"
+      <VRow class="d-flex justify-lg-between my-5">
+        <VCol class="text-gray-500" cols="12" lg="6"
           >2021 @ TeamTrack. All rights reserved.</VCol
         >
 
-        <VRow align="end" class="d-flex justify-end">
-          <VCol cols="2">
-            <VBtn icon="mdi-facebook"></VBtn>
-          </VCol>
+        <VCol align="end" class="d-flex justify-between" cols="12" lg="6">
+          <VBtn icon="mdi-facebook" size="small" class="bg-transparent"></VBtn>
 
-          <VCol cols="2">
-            <VBtn icon="mdi-instagram"></VBtn>
-          </VCol>
+          <VBtn icon="mdi-instagram" size="small" class="bg-transparent"></VBtn>
 
-          <VCol cols="2">
-            <VBtn icon="mdi-slack"></VBtn>
-          </VCol>
+          <VBtn icon="mdi-slack" size="small" class="bg-transparent"></VBtn>
 
-          <VCol cols="2">
-            <VBtn icon="mdi-whatsapp"></VBtn>
-          </VCol>
+          <VBtn icon="mdi-whatsapp" size="small" class="bg-transparent"></VBtn>
 
-          <VCol cols="2">
-            <VBtn icon="mdi-twitter"></VBtn>
-          </VCol>
-        </VRow>
+          <VBtn icon="mdi-twitter" size="small" class="bg-transparent"></VBtn>
+        </VCol>
       </VRow>
     </VContainer>
   </div>

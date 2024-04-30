@@ -42,6 +42,13 @@ const handleShowJob = () => {
   }
 };
 
+const avatarText = (value) => {
+  if (!value) return "";
+  const nameArray = value.split(" ");
+
+  return nameArray.map((word) => word.charAt(0).toUpperCase()).join("");
+};
+
 // Call the fetchLatestJob function when the component is mounted
 onMounted(async () => {
   await fetchLatestJob();
@@ -57,12 +64,12 @@ onMounted(async () => {
 
     <!-- Show the jobs when they have been fetched -->
     <VContainer v-else>
-      <div class="d-flex align-center justify-between">
+      <div class="d-flex align-center justify-between flex-wrap">
         <div class="text-h3 ma-5">
           <h1
             class="text-indigo-darken-4 font-weight-bold text-shades-black tracking-wide font-mono"
           >
-            Featured<span class="text-blue-lighten-2 mt-2">Jobs</span>
+            Latest<span class="text-blue-lighten-2 mt-2">Jobs</span>
           </h1>
         </div>
         <div>
@@ -85,28 +92,41 @@ onMounted(async () => {
             md="4"
             lg="3"
           >
-            <VCard
-              class="pa-3 mb-3 elevation-0 border-gray-500 border h-100 rounded-lg"
-            >
-              <VCardTitle class="d-flex justify-between">
-                <div>
-                  <VAvatar color="red">
-                    <img
-                      :src="
-                        job.company.logo_url
-                          ? `http://127.0.0.1:8000/storage/logos/${job.company.logo_url}`
-                          : '/Frame.png'
-                      "
-                      alt="alt"
+            <VCard class="pa-3 mb-3 elevation-0 h-100 rounded-lg">
+              <VCardText class="d-flex justify-between">
+                <div class="d-flex align-center">
+                  <!-- 👉  Avatar -->
+                  <VAvatar
+                    size="32"
+                    :color="job.company.logo_url ? '' : 'primary'"
+                    :class="
+                      job.company.logo_url
+                        ? ''
+                        : 'v-avatar-light-bg primary--text'
+                    "
+                    :variant="!job.company.logo_url ? 'tonal' : undefined"
+                  >
+                    <VImg
+                      v-if="job.company.logo_url"
+                      :src="fetchImage(`logos/${job.company.logo_url}`)"
                     />
+                    <span v-else>{{ avatarText(job.company.name) }}</span>
                   </VAvatar>
+                </div>
+                <!--👉  Name and location -->
+                <div class="d-flex flex-column ms-3">
+                  <span class="d-block">{{ job.company.name }}</span>
+
+                  <VChip prepend-icon="mdi-map-marker" size="small">{{
+                    job.company.location
+                  }}</VChip>
                 </div>
                 <div>
                   <VChip color="primary" rounded="0" variant="outlined">{{
                     job.employment_type
                   }}</VChip>
                 </div>
-              </VCardTitle>
+              </VCardText>
 
               <div>
                 <VCardTitle>{{ job.title }}</VCardTitle>
