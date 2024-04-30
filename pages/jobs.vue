@@ -67,6 +67,20 @@ function experienceRequired(experienceLevels) {
   return `Experience required: ${minExperience}-${maxExperience} years`;
 }
 
+const avatarText = (value) => {
+  if (!value) return "";
+  const nameArray = value.split(" ");
+
+  return nameArray.map((word) => word.charAt(0).toUpperCase()).join("");
+};
+
+const fetchImage = (url) => {
+  const BASEURL = "http://127.0.0.1:8000/storage/";
+  const image = BASEURL + `${url}`;
+
+  return image;
+};
+
 // Fetch data from the API when the component is mounted
 onMounted(async () => {
   await fetchCompany();
@@ -95,33 +109,38 @@ onMounted(async () => {
             <VCard
               class="pa-3 mb-3 elevation-0 border-gray-500 border h-100 rounded-lg"
             >
-              <VCardTitle class="d-flex align-center">
-                <div>
-                  <VAvatar color="red">
-                    <img
-                      :src="
-                        job.company.logo_url
-                          ? `http://127.0.0.1:8000/storage/logos/${job.company.logo_url}`
-                          : '/Frame.png'
-                      "
-                      alt="alt"
+              <VCardText class="d-flex justify-between">
+                <div class="d-flex align-center">
+                  <!-- 👉  Avatar -->
+                  <VAvatar
+                    size="32"
+                    :color="job.company.logo_url ? '' : 'primary'"
+                    :class="
+                      job.company.logo_url
+                        ? ''
+                        : 'v-avatar-light-bg primary--text'
+                    "
+                    :variant="!job.company.logo_url ? 'tonal' : undefined"
+                  >
+                    <VImg
+                      v-if="job.company.logo_url"
+                      :src="fetchImage(`logos/${job.company.logo_url}`)"
                     />
+                    <span v-else>{{ avatarText(job.company.name) }}</span>
                   </VAvatar>
                 </div>
-                <div>
+                <div class="d-flex flex-column ms-3">
+                  <span class="d-block">{{ job.title }}</span>
 
-                  <VCardTitle>{{ job.title }}</VCardTitle>
-
-                  <VCardSubtitle>
-                    <div>
-                      {{ job.company.name }}
+                  <span class="text-gray-500">
+                    {{ job.company.name }}
+                    <span>
                       <VIcon>mdi-circle-small</VIcon>
-                      <span>{{ job.company.location }}</span>
-                    </div>
-                  </VCardSubtitle>
-
+                      {{ job.company.location }}
+                    </span>
+                  </span>
                 </div>
-              </VCardTitle>
+              </VCardText>
 
               <div>
                 <VChip color="primary">{{ job.employment_type }}</VChip>
@@ -140,7 +159,6 @@ onMounted(async () => {
                 </div>
               </div>
 
-
               <VCardText>
                 <div class="my-3">{{ job.description }}</div>
 
@@ -155,7 +173,6 @@ onMounted(async () => {
                     {{ experienceRequired(job.required_experience) }}
                   </p>
                 </div>
-
               </VCardText>
 
               <VCardText class="d-flex justify-center align-center">
@@ -216,11 +233,7 @@ onMounted(async () => {
             <VCardActions>
               <VSpacer></VSpacer>
 
-              <VBtn
-                text="Close"
-                variant="plain"
-                @click="dialog = false"
-              ></VBtn>
+              <VBtn text="Close" variant="plain" @click="dialog = false"></VBtn>
 
               <VBtn
                 color="primary"

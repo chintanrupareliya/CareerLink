@@ -49,6 +49,13 @@ const avatarText = (value) => {
   return nameArray.map((word) => word.charAt(0).toUpperCase()).join("");
 };
 
+const fetchImage = (url) => {
+  const BASEURL = "http://127.0.0.1:8000/storage/";
+  const image = BASEURL + `${url}`;
+
+  return image;
+};
+
 // Call the fetchLatestJob function when the component is mounted
 onMounted(async () => {
   await fetchLatestJob();
