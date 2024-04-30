@@ -1,16 +1,20 @@
 <script setup>
+//Imports
 import { emailValidator, requiredValidator } from "../utils/validation";
 import { useUserStore } from "@/store/useUser";
 
+// References
 const email = ref("");
 const password = ref("");
 const router = useRouter();
 const refForm = ref();
 
+// Accessing user store
 const userStore = useUserStore();
 
 const { handleLogin } = userStore;
 
+// Function to handle form submission
 const onSubmit = async () => {
   const validate = await refForm.value.validate();
   if (validate.valid) {
@@ -23,12 +27,14 @@ const onSubmit = async () => {
   }
 };
 </script>
+
 <template>
   <div class="h-screen flex justify-center items-center">
     <VCard class="w-full md:max-w-md p-10 border rounded-xl">
       <v-container>
         <VCardText class="w-full">
           <VCardTitle class="text-h5 mb-5">Login To Team Track</VCardTitle>
+          <!-- Login form  -->
           <VForm @submit.prevent="onSubmit" ref="refForm">
             <VTextField
               v-model="email"
@@ -37,6 +43,7 @@ const onSubmit = async () => {
               :rules="[emailValidator, requiredValidator]"
               class="my-4"
             />
+
             <VTextField
               v-model="password"
               label="Password"
@@ -45,6 +52,7 @@ const onSubmit = async () => {
               :rules="[requiredValidator]"
               class="my-4"
             />
+
             <VBtn
               color="blue"
               type="submit"

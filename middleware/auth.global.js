@@ -1,20 +1,22 @@
 import { useUserStore } from "~/store/useUser";
 
-export default defineNuxtRouteMiddleware(async (to) => {
+//middleware for auth guard and fetch user data on page reload 
+
+export default defineNuxtRouteMiddleware((to) => {
   const userStore = useUserStore();
-  const { user} = storeToRefs(userStore);
+  const { user } = storeToRefs(userStore);
   const { fetchSelf } = userStore;
-  
+
   const token = useCookie("token");
   if (token.value && user.value === null) {
-    await fetchSelf();
+    fetchSelf();
   }
   if (token.value) {
     if (to.path === "/login" || to.path === "/register") {
       return navigateTo("/");
     }
   } else if (!token.value) {
-    if (to.path === "/jobs" || to.path === "/application") {
+    if (to.path === "/jobs" || to.path === "/applications") {
       return navigateTo("/");
     }
   } else {

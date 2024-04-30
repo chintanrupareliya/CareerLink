@@ -1,10 +1,12 @@
 <script setup>
+//
 import axios from "axios";
 import { VCardSubtitle } from "vuetify/components";
 
 const jobApplications = ref(null);
 const loading = ref(false);
 
+//Fetch data from API
 const fetchApplications = async () => {
   loading.value = true;
   const response = await axios.get(`/job_applications/my_application`);
@@ -12,6 +14,7 @@ const fetchApplications = async () => {
   loading.value = false;
 };
 
+//return status and color for status field
 const getStatusDisplay = (statusCode) => {
   let status = "";
   let color = "";
@@ -44,6 +47,7 @@ const avatarText = (value) => {
   return nameArray.map((word) => word.charAt(0).toUpperCase()).join("");
 };
 
+//return image url of backend
 const fetchImage = (url) => {
   const BASEURL = "http://127.0.0.1:8000/storage/";
   const image = BASEURL + `${url}`;
@@ -51,15 +55,18 @@ const fetchImage = (url) => {
   return image;
 };
 
+//formate apply date it Today,1 day ago...
 const formatDateToTimeAgo = (dateString) => {
   const currentDate = new Date();
   const previousDate = new Date(dateString);
-  const elapsedMilliseconds = currentDate - previousDate;
 
-  const seconds = Math.floor(elapsedMilliseconds / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  // Check if the dates are the same day
+  if (currentDate.toDateString() === previousDate.toDateString()) {
+    return "today";
+  }
+
+  const elapsedMilliseconds = currentDate - previousDate;
+  const days = Math.floor(elapsedMilliseconds / (1000 * 60 * 60 * 24));
   const months = Math.floor(days / 30);
   const years = Math.floor(months / 12);
 
@@ -67,60 +74,63 @@ const formatDateToTimeAgo = (dateString) => {
     return `${years} year${years > 1 ? "s" : ""} ago`;
   } else if (months > 0) {
     return `${months} month${months > 1 ? "s" : ""} ago`;
-  } else if (days > 0) {
-    return `${days} day${days > 1 ? "s" : ""} ago`;
-  } else if (hours > 0) {
-    return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  } else if (minutes > 0) {
-    return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
   } else {
-    return `${seconds} second${seconds > 1 ? "s" : ""} ago`;
+    return `${days} day${days > 1 ? "s" : ""} ago`;
   }
 };
 
+//fetch data of application on load of page
 onMounted(async () => {
   await fetchApplications();
 });
 </script>
+
 <template>
   <div class="application">
     <div v-if="loading" class="d-flex align-center justify-center">
       <VProgressCircular :size="40" color="primary" indeterminate />
     </div>
+
     <v-container v-else>
       <VRow>
-        <VCol cols="12" class="text-center text-h4">Job Applications </VCol>
+        <VCol cols="12" class="text-center text-h4"> Job Applications </VCol>
       </VRow>
-      <v-row>
+
+      <VRow>
         <v-col
           v-for="application in jobApplications"
           :key="application.id"
           cols="12"
         >
           <v-card class="mb-4" outlined>
-            <vContainer>
-              <v-card-title>Job Title:{{ application.job.title }}</v-card-title>
-              <VCardSubtitle
-                ><VIcon>mdi-map-marker</VIcon
-                >{{ application.job.company.location }}</VCardSubtitle
-              >
-              <v-card-text class="d-flex w-100 justify-space-around flex-wrap">
+            <VContainer>
+              <v-card-title>
+                Job Title:{{ application.job.title }}
+              </v-card-title>
+
+              <VCardSubtitle>
+                <VIcon>mdi-map-marker</VIcon>
+                {{ application.job.company.location }}
+              </VCardSubtitle>
+
+              <VCardText class="d-flex w-100 justify-space-around flex-wrap">
                 <VRow>
                   <VCol cols="12" lg="3" md="3" sm="3">
                     <div>
                       {{ application.cover_letter }}
-                    </div></VCol
-                  >
+                    </div>
+                  </VCol>
+
                   <VCol cols="12" lg="3" md="3" sm="3">
                     <div>
                       <VChip
                         :color="getStatusDisplay(application.status).color"
-                        >{{
-                          getStatusDisplay(application.status).status
-                        }}</VChip
                       >
+                        {{ getStatusDisplay(application.status).status }}
+                      </VChip>
                     </div>
                   </VCol>
+
                   <VCol cols="12" lg="3" md="3" sm="3">
                     <div>
                       <VChip color="success" prepend-icon="mdi-clock">
@@ -132,6 +142,7 @@ onMounted(async () => {
                       </VChip>
                     </div>
                   </VCol>
+
                   <VCol cols="12" lg="3" md="3" sm="3">
                     <div class="text-blue-700 ma-4">
                       <a
@@ -144,7 +155,7 @@ onMounted(async () => {
                     </div>
                   </VCol>
                 </VRow>
-              </v-card-text>
+              </VCardText>
               <div class="d-flex align-center">
                 <!-- 👉  Avatar -->
                 <VAvatar
@@ -176,16 +187,19 @@ onMounted(async () => {
                     class="d-block font-weight-medium text--primary text-truncate"
                     >{{ application.job.company.name }}</span
                   >
+
                   <small>{{ application.job.company.location }}</small>
                 </div>
               </div>
-            </vContainer>
+            </VContainer>
           </v-card>
         </v-col>
-      </v-row>
+      </VRow>
     </v-container>
   </div>
 </template>
+
+//style for background
 <style scoped>
 .application {
   width: 100%;

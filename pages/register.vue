@@ -1,13 +1,14 @@
 <script setup>
+// Imports
 import {
   requiredValidator,
   emailValidator,
   passwordValidator,
   confirmedValidator,
 } from "../utils/validation";
-import axios from "axios";
 import { useUserStore } from "~/store/useUser";
 
+// References
 const email = ref("");
 const password = ref("");
 const firstName = ref("");
@@ -19,8 +20,10 @@ const router = useRouter();
 const visible = ref(false);
 const comfirmvisible = ref(false);
 
+// Destructuring handleRegister method from user store
 const { handleRegister } = userStore;
 
+// Function to handle form submission
 const onSubmit = async () => {
   const validate = await formRef.value.validate();
   if (validate.valid) {
@@ -36,11 +39,12 @@ const onSubmit = async () => {
   }
 };
 </script>
+
 <template>
   <div class="flex justify-center items-center">
-    <v-container class="flex flex-col justify-center items-center">
+    <VContainer class="flex flex-col justify-center items-center">
       <VCard class="w-full md:max-w-md p-10 border rounded-xl">
-        <v-container>
+        <VContainer>
           <VCardText class="w-full">
             <VCardTitle class="text-h5 mb-5">Register To Team Track</VCardTitle>
             <VForm @submit.prevent="onSubmit" ref="formRef">
@@ -51,6 +55,7 @@ const onSubmit = async () => {
                 variant="outlined"
                 class="my-4"
               />
+
               <VTextField
                 v-model="lastName"
                 label="Last Name"
@@ -58,6 +63,7 @@ const onSubmit = async () => {
                 variant="outlined"
                 class="my-4"
               />
+
               <VTextField
                 v-model="email"
                 label="Email"
@@ -65,6 +71,7 @@ const onSubmit = async () => {
                 :rules="[requiredValidator, emailValidator]"
                 class="my-4"
               />
+
               <VTextField
                 v-model="password"
                 label="Password"
@@ -75,6 +82,7 @@ const onSubmit = async () => {
                 :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                 class="my-4"
               />
+
               <VTextField
                 v-model="passwordConfirmation"
                 label="Confirm Password"
@@ -88,6 +96,7 @@ const onSubmit = async () => {
                 :append-inner-icon="comfirmvisible ? 'mdi-eye-off' : 'mdi-eye'"
                 class="my-4"
               />
+
               <VBtn
                 color="blue"
                 type="submit"
@@ -96,19 +105,21 @@ const onSubmit = async () => {
               >
             </VForm>
           </VCardText>
+
           <VCardActions>
             <p class="flex items-center">
               <span class="mr-auto">Already have an account?</span>
               <NuxtLink to="/login" class="text-blue-600">Login</NuxtLink>
             </p>
           </VCardActions>
+
           <div class="flex justify-center items-center my-5">
             <div class="border w-1/4 h-0"></div>
             <p class="mx-2">or</p>
             <div class="border w-1/4 h-0"></div>
           </div>
-        </v-container>
+        </VContainer>
       </VCard>
-    </v-container>
+    </VContainer>
   </div>
 </template>

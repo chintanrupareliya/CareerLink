@@ -1,4 +1,5 @@
 <script setup></script>
+
 <template>
   <div>
     <div class="hero d-flex align-center justify-center">
@@ -12,20 +13,24 @@
                 >
                   Discover
                   <span class="my-2 d-block drop-shadow-xl">More Than</span>
+
                   <span class="text-blue-lighten-2 mt-2 drop-shadow-xl d-block">
                     5000+ Jobs
                   </span>
                 </h1>
               </div>
+
               <div>
                 <img src="/Group.png" class="my-5 mx-2" />
               </div>
+
               <p class="text-gray-500 text-2xl">
                 Great platform for the job seeker that searching for new career
                 heights and passionate about startups.
               </p>
             </VCol>
           </VRow>
+
           <VRow>
             <VCol cols="12" lg="6">
               <div class="search-bar">
@@ -48,6 +53,7 @@
                     >Search</VBtn
                   >
                 </VForm>
+
                 <p class="text-gray-500">
                   Popular : UI Designer, UX Researcher, Android, Admin
                 </p>
@@ -60,6 +66,7 @@
     <div>
       <VContainer>
         <p class="text-gray-400 text-2xl">Companies we helped grow</p>
+
         <div class="mt-10">
           <VImg src="/Featured Company.jpg" />
         </div>

@@ -1,9 +1,11 @@
 <script setup>
+//Imports
 import axios from "axios";
 import { VCardSubtitle } from "vuetify/components";
 import { requiredValidator } from "../utils/validation";
 import { toast } from "vue3-toastify";
 
+//// Initial data for the component
 const jobs = ref(null);
 const loading = ref(false);
 const dialog = ref(false);
@@ -12,6 +14,7 @@ const resume = ref(null);
 const selectedJobId = ref(null);
 const coverLetter = ref(null);
 
+// Fetch data from the API
 const fetchCompany = async () => {
   loading.value = true;
   const token = useCookie("token");
@@ -22,11 +25,13 @@ const fetchCompany = async () => {
   }
 };
 
+// Function to initiate the job application process
 const applyForJob = (jobId) => {
   selectedJobId.value = jobId;
   dialog.value = true;
 };
 
+// Function to handle form submission for job application
 const handleSubmit = async () => {
   try {
     const formData = new FormData();
@@ -45,6 +50,7 @@ const handleSubmit = async () => {
   }
 };
 
+// Function to format the required experience levels for a job
 function experienceRequired(experienceLevels) {
   if (experienceLevels.length === 0) {
     return "No experience required";
@@ -61,19 +67,24 @@ function experienceRequired(experienceLevels) {
   return `Experience required: ${minExperience}-${maxExperience} years`;
 }
 
+// Fetch data from the API when the component is mounted
 onMounted(async () => {
   await fetchCompany();
 });
 </script>
+
 <template>
   <div>
     <div class="jobpage">
+      <!-- display a loading while the data is fetch from api  -->
       <div v-if="loading" class="d-flex align-center justify-center">
         <VProgressCircular :size="40" color="primary" indeterminate />
       </div>
+
+      <!-- display data after fetched from api  -->
       <VContainer v-else>
-        <v-row>
-          <v-col
+        <VRow>
+          <VCol
             v-for="(job, index) in jobs"
             :key="index"
             cols="12"
@@ -81,7 +92,7 @@ onMounted(async () => {
             md="4"
             lg="3"
           >
-            <v-card
+            <VCard
               class="pa-3 mb-3 elevation-0 border-gray-500 border h-100 rounded-lg"
             >
               <VCardTitle class="d-flex align-center">
@@ -98,7 +109,9 @@ onMounted(async () => {
                   </VAvatar>
                 </div>
                 <div>
+
                   <VCardTitle>{{ job.title }}</VCardTitle>
+
                   <VCardSubtitle>
                     <div>
                       {{ job.company.name }}
@@ -106,11 +119,14 @@ onMounted(async () => {
                       <span>{{ job.company.location }}</span>
                     </div>
                   </VCardSubtitle>
+
                 </div>
               </VCardTitle>
+
               <div>
                 <VChip color="primary">{{ job.employment_type }}</VChip>
               </div>
+
               <div>
                 <div>
                   <VChip
@@ -123,19 +139,25 @@ onMounted(async () => {
                   </VChip>
                 </div>
               </div>
+
+
               <VCardText>
                 <div class="my-3">{{ job.description }}</div>
+
                 <div class="mb-2">
                   <VChip prepend-icon="mdi-currency-usd">
                     {{ job.salary }}
                   </VChip>
                 </div>
+
                 <div>
                   <p class="font-bold">
                     {{ experienceRequired(job.required_experience) }}
                   </p>
                 </div>
+
               </VCardText>
+
               <VCardText class="d-flex justify-center align-center">
                 <VBtn
                   color="blue-lighten-3"
@@ -145,21 +167,21 @@ onMounted(async () => {
                   >Apply Now</VBtn
                 >
               </VCardText>
-            </v-card>
-          </v-col>
-        </v-row>
+            </VCard>
+          </VCol>
+        </VRow>
       </VContainer>
     </div>
 
     <div class="pa-4 text-center">
-      <v-dialog v-model="dialog" max-width="600">
-        <v-card
+      <VDialog v-model="dialog" max-width="600">
+        <VCard
           prepend-icon="mdi-application-edit-outline"
           title="Job Application"
         >
           <VForm @submit.prevent="handleSubmit" ref="formRef">
-            <v-card-text>
-              <v-row dense>
+            <VCardText>
+              <VRow dense>
                 <VCol cols="12">
                   <VFileInput
                     small-chips
@@ -182,34 +204,34 @@ onMounted(async () => {
                     variant="outlined"
                   ></VTextarea>
                 </VCol>
-              </v-row>
+              </VRow>
 
               <small class="text-caption text-medium-emphasis"
                 >*indicates required field</small
               >
-            </v-card-text>
+            </VCardText>
 
-            <v-divider></v-divider>
+            <VDivider></VDivider>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
+            <VCardActions>
+              <VSpacer></VSpacer>
 
-              <v-btn
+              <VBtn
                 text="Close"
                 variant="plain"
                 @click="dialog = false"
-              ></v-btn>
+              ></VBtn>
 
-              <v-btn
+              <VBtn
                 color="primary"
                 text="Apply"
                 variant="tonal"
                 type="submit"
-              ></v-btn>
-            </v-card-actions>
+              ></VBtn>
+            </VCardActions>
           </VForm>
-        </v-card>
-      </v-dialog>
+        </VCard>
+      </VDialog>
     </div>
   </div>
 </template>

@@ -1,11 +1,21 @@
 <script setup>
+//Imports
 import axios from "axios";
+
+// Initial data for the component
 const jobs = ref([]);
+const loading = ref(false);
+const router = useRouter();
+
+// Fetching data from the API
 const fetchLatestJob = async () => {
+  loading.value = true;
   const responce = await axios.get("/latest_jobs");
   jobs.value = responce.data.data;
+  loading.value = false;
 };
 
+// covert array to experience Required string
 function experienceRequired(experienceLevels) {
   if (experienceLevels.length === 0) {
     return "No experience required";
@@ -22,13 +32,31 @@ function experienceRequired(experienceLevels) {
   return `Experience required: ${minExperience}-${maxExperience} years`;
 }
 
+//redirect user to login it try to access jobs
+const handleShowJob = () => {
+  const token = useCookie("token");
+  if (token.value) {
+    router.push("/jobs");
+  } else {
+    router.push("/login");
+  }
+};
+
+// Call the fetchLatestJob function when the component is mounted
 onMounted(async () => {
   await fetchLatestJob();
 });
 </script>
 <template>
   <div class="mt-5 Jobs">
-    <VContainer>
+    <!-- Show a loading spinner while the jobs are being fetched -->
+
+    <div v-if="loading" class="d-flex align-center justify-center">
+      <VProgressCircular :size="40" color="primary" indeterminate />
+    </div>
+
+    <!-- Show the jobs when they have been fetched -->
+    <VContainer v-else>
       <div class="d-flex align-center justify-between">
         <div class="text-h3 ma-5">
           <h1
@@ -38,15 +66,18 @@ onMounted(async () => {
           </h1>
         </div>
         <div>
-          <NuxtLink to="/jobs" class="text-blue-700"
-            >Show all jobs <VIcon>mdi-arrow-right</VIcon></NuxtLink
+          <VBtn
+            class="text-blue-700 elevation-0 text-none bg-transparent"
+            @click="handleShowJob"
           >
+            Show all jobs <VIcon>mdi-arrow-right</VIcon>
+          </VBtn>
         </div>
       </div>
       <div v-if="jobs.length === 0">No jobs available</div>
       <div v-else>
-        <v-row>
-          <v-col
+        <VRow>
+          <VCol
             v-for="(job, index) in jobs"
             :key="index"
             cols="12"
@@ -54,7 +85,9 @@ onMounted(async () => {
             md="4"
             lg="3"
           >
-            <v-card class="pa-3 mb-3 elevation-0 border-gray-500 border h-100">
+            <VCard
+              class="pa-3 mb-3 elevation-0 border-gray-500 border h-100 rounded-lg"
+            >
               <VCardTitle class="d-flex justify-between">
                 <div>
                   <VAvatar color="red">
@@ -107,9 +140,9 @@ onMounted(async () => {
                   </div>
                 </div>
               </VCardText>
-            </v-card>
-          </v-col>
-        </v-row>
+            </VCard>
+          </VCol>
+        </VRow>
       </div>
     </VContainer>
   </div>
