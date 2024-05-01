@@ -9,7 +9,7 @@ const loading = ref(false);
 //Fetch data from API
 const fetchApplications = async () => {
   loading.value = true;
-  const response = await axios.get(`/job_applications/my_application`);
+  const response = await axios.get(`/job_application/my_application`);
   jobApplications.value = response.data.data;
   loading.value = false;
 };
