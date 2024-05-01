@@ -1,7 +1,6 @@
 <script setup>
 //Imports
 import axios from "axios";
-import { VCardSubtitle } from "vuetify/components";
 import { requiredValidator } from "../utils/validation";
 import { toast } from "vue3-toastify";
 
@@ -15,13 +14,15 @@ const selectedJobId = ref(null);
 const coverLetter = ref(null);
 
 // Fetch data from the API
-const fetchCompany = async () => {
+const fetchJobs = async () => {
   loading.value = true;
   const token = useCookie("token");
   if (token.value) {
-    const response = await axios.get("/jobs");
+    const response = await axios.get("/job");
     jobs.value = response.data.data;
-    loading.value = false;
+    setTimeout(() => {
+      loading.value = false;
+    }, 1000);
   }
 };
 
@@ -35,11 +36,11 @@ const applyForJob = (jobId) => {
 const handleSubmit = async () => {
   try {
     const formData = new FormData();
-    console.log(resume);
+
     formData.append("job_id", selectedJobId.value);
     formData.append("resume", resume.value);
     formData.append("cover_letter", coverLetter.value);
-    const response = await axios.post("job_applications/create", formData);
+    const response = await axios.post("job_application/create", formData);
     if (response.status === 200) {
       dialog.value = false;
       toast.success("Application submitted successfully");
@@ -83,7 +84,7 @@ const fetchImage = (url) => {
 
 // Fetch data from the API when the component is mounted
 onMounted(async () => {
-  await fetchCompany();
+  await fetchJobs();
 });
 </script>
 
@@ -91,7 +92,7 @@ onMounted(async () => {
   <div>
     <div class="jobpage">
       <!-- display a loading while the data is fetch from api  -->
-      <div v-if="loading" class="d-flex align-center justify-center">
+      <div v-if="jobs === null" class="d-flex align-center justify-center">
         <VProgressCircular :size="40" color="primary" indeterminate />
       </div>
 
@@ -106,85 +107,91 @@ onMounted(async () => {
             md="4"
             lg="3"
           >
-            <VCard
-              class="pa-3 mb-3 elevation-0 border-gray-500 border h-100 rounded-lg"
+            <v-skeleton-loader
+              type="list-item-avatar-two-line,divider,chip,list-item,list-item-two-line,article,button"
+              :loading="loading"
+              class="h-100"
             >
-              <VCardText class="d-flex justify-between">
-                <div class="d-flex align-center">
-                  <!-- 👉  Avatar -->
-                  <VAvatar
-                    size="32"
-                    :color="job.company.logo_url ? '' : 'primary'"
-                    :class="
-                      job.company.logo_url
-                        ? ''
-                        : 'v-avatar-light-bg primary--text'
-                    "
-                    :variant="!job.company.logo_url ? 'tonal' : undefined"
-                  >
-                    <VImg
-                      v-if="job.company.logo_url"
-                      :src="fetchImage(`logos/${job.company.logo_url}`)"
-                    />
-                    <span v-else>{{ avatarText(job.company.name) }}</span>
-                  </VAvatar>
-                </div>
-                <div class="d-flex flex-column ms-3">
-                  <span class="d-block">{{ job.title }}</span>
+              <VCard
+                class="pa-3 mb-3 elevation-0 border-gray-500 border h-100 rounded-lg"
+              >
+                <VCardText class="d-flex justify-between">
+                  <div class="d-flex align-center">
+                    <!-- 👉  Avatar -->
+                    <VAvatar
+                      size="32"
+                      :color="job.company.logo_url ? '' : 'primary'"
+                      :class="
+                        job.company.logo_url
+                          ? ''
+                          : 'v-avatar-light-bg primary--text'
+                      "
+                      :variant="!job.company.logo_url ? 'tonal' : undefined"
+                    >
+                      <VImg
+                        v-if="job.company.logo_url"
+                        :src="fetchImage(`logos/${job.company.logo_url}`)"
+                      />
+                      <span v-else>{{ avatarText(job.company.name) }}</span>
+                    </VAvatar>
+                  </div>
+                  <div class="d-flex flex-column ms-3">
+                    <span class="d-block">{{ job.title }}</span>
 
-                  <span class="text-gray-500">
-                    {{ job.company.name }}
-                    <span>
-                      <VIcon>mdi-circle-small</VIcon>
-                      {{ job.company.location }}
+                    <span class="text-gray-500">
+                      {{ job.company.name }}
+                      <span>
+                        <VIcon>mdi-circle-small</VIcon>
+                        {{ job.company.location }}
+                      </span>
                     </span>
-                  </span>
-                </div>
-              </VCardText>
-
-              <div>
-                <VChip color="primary">{{ job.employment_type }}</VChip>
-              </div>
-
-              <div>
+                  </div>
+                </VCardText>
+                <VDivider color="primary" />
                 <div>
-                  <VChip
-                    v-for="(skill, index) in job.required_skills"
-                    :key="index"
-                    class="mx-1 my-1"
-                    size="small"
+                  <VChip color="primary">{{ job.employment_type }}</VChip>
+                </div>
+
+                <div>
+                  <div>
+                    <VChip
+                      v-for="(skill, index) in job.required_skills"
+                      :key="index"
+                      class="mx-1 my-1"
+                      size="small"
+                    >
+                      {{ skill }}
+                    </VChip>
+                  </div>
+                </div>
+
+                <VCardText>
+                  <div class="my-3">{{ job.description }}</div>
+
+                  <div class="mb-2">
+                    <VChip prepend-icon="mdi-currency-usd">
+                      {{ job.salary }}
+                    </VChip>
+                  </div>
+
+                  <div>
+                    <p class="font-bold">
+                      {{ experienceRequired(job.required_experience) }}
+                    </p>
+                  </div>
+                </VCardText>
+
+                <VCardText class="d-flex justify-center align-center">
+                  <VBtn
+                    color="blue-lighten-3"
+                    class="text-none text-white text-lg text-bold elevation-0 rounded-2xl w-75 bottom-2 position-absolute"
+                    append-icon="mdi-open-in-new"
+                    @click="applyForJob(job.id)"
+                    >Apply Now</VBtn
                   >
-                    {{ skill }}
-                  </VChip>
-                </div>
-              </div>
-
-              <VCardText>
-                <div class="my-3">{{ job.description }}</div>
-
-                <div class="mb-2">
-                  <VChip prepend-icon="mdi-currency-usd">
-                    {{ job.salary }}
-                  </VChip>
-                </div>
-
-                <div>
-                  <p class="font-bold">
-                    {{ experienceRequired(job.required_experience) }}
-                  </p>
-                </div>
-              </VCardText>
-
-              <VCardText class="d-flex justify-center align-center">
-                <VBtn
-                  color="blue-lighten-3"
-                  class="text-none text-white text-lg text-bold elevation-0 rounded-2xl w-75 bottom-2 position-absolute"
-                  append-icon="mdi-open-in-new"
-                  @click="applyForJob(job.id)"
-                  >Apply Now</VBtn
-                >
-              </VCardText>
-            </VCard>
+                </VCardText>
+              </VCard>
+            </v-skeleton-loader>
           </VCol>
         </VRow>
       </VContainer>
