@@ -37,7 +37,6 @@ export const useUserStore = defineStore("user", () => {
   //for logout API call
   const logout = async () => {
     try {
-      console.log("hii");
       const response = await axios.post("auth/logout", null);
       if (response.status === 200) {
         const token = useCookie("token");
