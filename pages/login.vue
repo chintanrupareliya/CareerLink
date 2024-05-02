@@ -2,12 +2,14 @@
 //Imports
 import { emailValidator, requiredValidator } from "../utils/validation";
 import { useUserStore } from "@/store/useUser";
+import { toast } from "vue3-toastify";
 
 // References
 const email = ref("");
 const password = ref("");
 const router = useRouter();
 const refForm = ref();
+const visible = ref(false);
 
 // Accessing user store
 const userStore = useUserStore();
@@ -16,14 +18,18 @@ const { handleLogin } = userStore;
 
 // Function to handle form submission
 const onSubmit = async () => {
-  const validate = await refForm.value.validate();
-  if (validate.valid) {
-    const formData = {
-      email: email.value,
-      password: password.value,
-    };
-    await handleLogin(formData);
-    router.push("/jobs");
+  try {
+    const validate = await refForm.value.validate();
+    if (validate.valid) {
+      const formData = {
+        email: email.value,
+        password: password.value,
+      };
+      await handleLogin(formData);
+      router.push("/jobs");
+    }
+  } catch (error) {
+    toast.error(error.response.data.message);
   }
 };
 </script>
@@ -48,8 +54,10 @@ const onSubmit = async () => {
               v-model="password"
               label="Password"
               variant="outlined"
-              type="password"
               :rules="[requiredValidator]"
+              :type="visible ? 'text' : 'password'"
+              @click:append-inner="visible = !visible"
+              :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
               class="my-4"
             />
 
