@@ -49,7 +49,7 @@ const avatarText = (value) => {
 
 //return image url of backend
 const fetchImage = (url) => {
-  const BASEURL = "http://127.0.0.1:8000/storage/";
+  const BASEURL = "https://employeemanagement.zapto.org/storage/";
   const image = BASEURL + `${url}`;
 
   return image;
